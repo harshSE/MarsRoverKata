@@ -6,11 +6,11 @@ class CommandFactory {
     private HashMap<Character, Command> initialToCommand = new HashMap<>();
     private static final Command DO_NOTHING_COMMAND = new DoNothingCommand();
 
-    CommandFactory() {
-        initialToCommand.put('R', new RotateRightCommand());
-        initialToCommand.put('L', new RotateLeftCommand());
-        initialToCommand.put('F', new ForwardCommand());
-        initialToCommand.put('B', new BackwardCommand());
+    CommandFactory(DirectionProvider directionProvider) {
+        initialToCommand.put('R', new RotateRightCommand(directionProvider));
+        initialToCommand.put('L', new RotateLeftCommand(directionProvider));
+        initialToCommand.put('F', new ForwardCommand(directionProvider));
+        initialToCommand.put('B', new BackwardCommand(directionProvider));
 
     }
 

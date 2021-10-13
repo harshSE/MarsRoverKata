@@ -2,9 +2,9 @@ package com.harshdev.kata.marsrover;
 
 public class RoverState {
     private final Coordinate coordinate;
-    private final Direction direction;
+    private final DirectionEnum direction;
 
-    public RoverState(Coordinate coordinate, Direction direction) {
+    public RoverState(Coordinate coordinate, DirectionEnum direction) {
         this.coordinate = coordinate;
         this.direction = direction;
     }
@@ -13,7 +13,11 @@ public class RoverState {
         return coordinate;
     }
 
-    public Direction direction() {
+    public DirectionEnum direction() {
         return direction;
+    }
+
+    public String serialize() {
+        return String.format("%s:%s:%s", coordinate().xAxis(), coordinate().yAxis(), direction().value());
     }
 }

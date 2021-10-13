@@ -1,11 +1,25 @@
 package com.harshdev.kata.marsrover;
 
 public class MarsRover {
-    private final CommandFactory commandFactory = new CommandFactory();
+
+    private Planet planet;
+    private final CommandFactory commandFactory;
     private RoverState currentState;
 
+    public MarsRover(Planet planet, Coordinate coordinate, DirectionEnum direction) {
+        this.planet = planet;
+        commandFactory = new CommandFactory(new DirectionProvider(planet));
+        currentState = new RoverState(coordinate, direction);
+    }
+
     public MarsRover(int x, int y, char direction) {
-        currentState = new RoverState(new Coordinate(x, y), Direction.from(direction));
+        this(new SpheresPlanet(
+                        new Axis(Integer.MIN_VALUE, Integer.MIN_VALUE),
+                        new Axis(Integer.MIN_VALUE, Integer.MIN_VALUE)
+                ),
+                new Coordinate(x, y),
+                DirectionEnum.from(direction));
+        currentState = new RoverState(new Coordinate(x, y), DirectionEnum.from(direction));
     }
 
     public String execute(String commands) {
@@ -14,7 +28,7 @@ public class MarsRover {
     }
 
     private String serializeState() {
-        return String.format("%s:%s:%s", currentState.coordinate().xAxis(), currentState.coordinate().yAxis(), currentState.direction().value());
+        return currentState.serialize();
     }
 
     private void execute(char command) {

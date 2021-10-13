@@ -1,6 +1,8 @@
 package com.harshdev.kata.marsrover;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -45,19 +47,27 @@ public class MarsRoverTest {
     }
 
     @Nested
-    public class ForwardBackWardDirectionTest {
+    public class ForwardAndBackWardDirectionTest {
 
         @Nested
         public class FacingNorthDirection {
 
             private MarsRover marsRover = new MarsRover(5, 5, NORTH);
+            private SpheresPlanet planet;
+
+            @BeforeEach
+            public void setUp() {
+                planet = new SpheresPlanet(new Axis(1, 6), new Axis(1, 10));
+                marsRover = new MarsRover(planet, new Coordinate(5,5), DirectionEnum.NORTH);
+            }
 
 
             @ParameterizedTest
             @CsvSource(value = {
                     "F, 5:6:N",
                     "FFF, 5:8:N",
-                    "FFFF, 5:9:N"
+                    "FFFF, 5:9:N",
+                    "FFFFF, 1:9:N"
             })
             public void forwardOneStepOnEachForwardCommand(String command, String expectedState) {
                 String state = marsRover.execute(command);
@@ -66,11 +76,13 @@ public class MarsRoverTest {
 
             @ParameterizedTest
             @CsvSource(value = {
-                    "B, 5:4:N",
-                    "BBB, 5:2:N",
-                    "BBBB, 5:1:N"
+                    "B, 1:4:N",
+                    "BBB, 1:2:N",
+                    "BBBB, 1:1:N",
+                    "BBBBB, 5:1:N",
             })
             public void backwardOneStepOnEachBackwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(1,5), DirectionEnum.NORTH);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
