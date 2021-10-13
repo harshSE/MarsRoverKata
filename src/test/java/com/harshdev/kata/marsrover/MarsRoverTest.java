@@ -1,8 +1,6 @@
 package com.harshdev.kata.marsrover;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -10,14 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MarsRoverTest {
 
-    public static final char NORTH = 'N';
-    private static final char SOUTH = 'S';
-    private static final char EAST = 'E';
-    private static final char WEST = 'W';
+    private final Planet planet = new SpheresPlanet(new Axis(1, 6), new Axis(1, 10));
 
     @Nested
     public class RotateDirectionTest {
-        private final MarsRover marsRover = new MarsRover(5, 5, NORTH);
+        private final MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), DirectionEnum.NORTH);
 
         @ParameterizedTest
         @CsvSource(value = {
@@ -27,7 +22,6 @@ public class MarsRoverTest {
                 "RRRR, 5:5:N"
         })
         public void turnTowardsRight(String command, String expectedOutput) {
-            MarsRover marsRover = new MarsRover(5, 5, NORTH);
             String state = marsRover.execute(command);
             assertThat(state).isEqualTo(expectedOutput);
         }
@@ -52,16 +46,6 @@ public class MarsRoverTest {
         @Nested
         public class FacingNorthDirection {
 
-            private MarsRover marsRover = new MarsRover(5, 5, NORTH);
-            private SpheresPlanet planet;
-
-            @BeforeEach
-            public void setUp() {
-                planet = new SpheresPlanet(new Axis(1, 6), new Axis(1, 10));
-                marsRover = new MarsRover(planet, new Coordinate(5,5), DirectionEnum.NORTH);
-            }
-
-
             @ParameterizedTest
             @CsvSource(value = {
                     "F, 5:6:N",
@@ -70,6 +54,7 @@ public class MarsRoverTest {
                     "FFFFF, 1:9:N"
             })
             public void forwardOneStepOnEachForwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), DirectionEnum.NORTH);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -82,7 +67,7 @@ public class MarsRoverTest {
                     "BBBBB, 5:1:N",
             })
             public void backwardOneStepOnEachBackwardCommand(String command, String expectedState) {
-                MarsRover marsRover = new MarsRover(planet, new Coordinate(1,5), DirectionEnum.NORTH);
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(1, 5), DirectionEnum.NORTH);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -91,16 +76,15 @@ public class MarsRoverTest {
         @Nested
         public class FacingSouthDirection {
 
-            private MarsRover marsRover = new MarsRover(5, 5, SOUTH);
-
-
             @ParameterizedTest
             @CsvSource(value = {
-                    "F, 5:4:S",
-                    "FFF, 5:2:S",
-                    "FFFF, 5:1:S"
+                    "F, 1:4:S",
+                    "FFF, 1:2:S",
+                    "FFFF, 1:1:S",
+                    "FFFFF, 5:1:S",
             })
             public void forwardOneStepOnEachForwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(1, 5), DirectionEnum.SOUTH);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -109,9 +93,11 @@ public class MarsRoverTest {
             @CsvSource(value = {
                     "B, 5:6:S",
                     "BBB, 5:8:S",
-                    "BBBB, 5:9:S"
+                    "BBBB, 5:9:S",
+                    "BBBBB, 1:9:S"
             })
             public void backwardOneStepOnEachBackwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), DirectionEnum.SOUTH);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -120,16 +106,16 @@ public class MarsRoverTest {
         @Nested
         public class FacingEastDirection {
 
-            private MarsRover marsRover = new MarsRover(5, 5, EAST);
-
 
             @ParameterizedTest
             @CsvSource(value = {
-                    "F, 6:5:E",
-                    "FFF, 8:5:E",
-                    "FFFF, 9:5:E"
+                    "F, 2:5:E",
+                    "FFF, 4:5:E",
+                    "FFFF, 5:5:E",
+                    "FFFFF, 1:5:E"
             })
             public void forwardOneStepOnEachForwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(1, 5), DirectionEnum.EAST);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -138,9 +124,11 @@ public class MarsRoverTest {
             @CsvSource(value = {
                     "B, 4:5:E",
                     "BBB, 2:5:E",
-                    "BBBB, 1:5:E"
+                    "BBBB, 1:5:E",
+                    "BBBBB, 5:5:E"
             })
             public void backwardOneStepOnEachBackwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), DirectionEnum.EAST);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
@@ -149,32 +137,33 @@ public class MarsRoverTest {
         @Nested
         public class FacingWestDirection {
 
-            private MarsRover marsRover = new MarsRover(5, 5, WEST);
-
-
             @ParameterizedTest
             @CsvSource(value = {
                     "F, 4:5:W",
                     "FFF, 2:5:W",
-                    "FFFF, 1:5:W"
+                    "FFFF, 1:5:W",
+                    "FFFFF, 5:5:W"
+
             })
             public void forwardOneStepOnEachForwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), DirectionEnum.WEST);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
 
             @ParameterizedTest
             @CsvSource(value = {
-                    "B, 6:5:W",
-                    "BBB, 8:5:W",
-                    "BBBB, 9:5:W"
+                    "B, 2:5:W",
+                    "BBB, 4:5:W",
+                    "BBBB, 5:5:W",
+                    "BBBBB, 1:5:W"
             })
             public void backwardOneStepOnEachBackwardCommand(String command, String expectedState) {
+                MarsRover marsRover = new MarsRover(planet, new Coordinate(1, 5), DirectionEnum.WEST);
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
         }
-
 
 
     }

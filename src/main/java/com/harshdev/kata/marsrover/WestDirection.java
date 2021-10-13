@@ -10,12 +10,12 @@ public class WestDirection implements Direction {
 
     @Override
     public Coordinate moveForward(Coordinate coordinate) {
-        return new Coordinate(coordinate.xAxis() - 1, coordinate.yAxis());
+        return planet.decrementX(coordinate);
     }
 
     @Override
     public Coordinate moveBackward(Coordinate coordinate) {
-        return new Coordinate(coordinate.xAxis() + 1, coordinate.yAxis());
+        return planet.incrementX(coordinate);
     }
 
     @Override

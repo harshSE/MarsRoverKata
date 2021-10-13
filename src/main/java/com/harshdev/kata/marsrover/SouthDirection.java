@@ -10,12 +10,12 @@ public class SouthDirection implements Direction {
 
     @Override
     public Coordinate moveForward(Coordinate coordinate) {
-        return new Coordinate(coordinate.xAxis(), coordinate.yAxis() - 1);
+        return planet.decrementY(coordinate);
     }
 
     @Override
     public Coordinate moveBackward(Coordinate coordinate) {
-        return new Coordinate(coordinate.xAxis(), coordinate.yAxis() + 1);
+        return planet.incrementY(coordinate);
     }
 
     @Override
