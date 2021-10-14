@@ -1,12 +1,20 @@
 package com.harshdev.kata.marsrover;
 
+import java.util.Collections;
+
 public class SpheresPlanet implements Planet {
     private final Axis xAxis;
     private final Axis yAxis;
+    private final Obstacles obstacles;
 
     public SpheresPlanet(Axis xAxis, Axis yAxis) {
+        this(xAxis, yAxis, new Obstacles(Collections.emptyList()));
+    }
+
+    public SpheresPlanet(Axis xAxis, Axis yAxis, Obstacles obstacles) {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
+        this.obstacles = obstacles;
     }
 
     @Override
@@ -16,7 +24,17 @@ public class SpheresPlanet implements Planet {
         if(newY == yAxis.end()) {
             return incrementX(coordinate);
         }
-        return new Coordinate(newX, newY);
+
+        Coordinate newCoordinate = new Coordinate(newX, newY);
+        checkObstacle(newCoordinate);
+
+        return newCoordinate;
+    }
+
+    private void checkObstacle(Coordinate newCoordinate) {
+        if(obstacles.hasAt(newCoordinate)){
+            throw new ObstacleOccurredException(newCoordinate);
+        }
     }
 
     @Override
@@ -26,7 +44,11 @@ public class SpheresPlanet implements Planet {
         if(newY < yAxis.start()) {
             return decrementX(coordinate);
         }
-        return new Coordinate(newX, newY);
+
+        Coordinate newCoordinate = new Coordinate(newX, newY);
+        checkObstacle(newCoordinate);
+
+        return newCoordinate;
     }
 
     @Override
@@ -35,7 +57,9 @@ public class SpheresPlanet implements Planet {
         if(newX == xAxis.end()) {
             newX = 1;
         }
-        return new Coordinate(newX, coordinate.yAxis());
+        Coordinate newCoordinate = new Coordinate(newX, coordinate.yAxis());
+        checkObstacle(newCoordinate);
+        return newCoordinate;
     }
 
     @Override
@@ -44,6 +68,9 @@ public class SpheresPlanet implements Planet {
         if(newX < xAxis.start()) {
             newX = xAxis.end()-1;
         }
-        return new Coordinate(newX, coordinate.yAxis());
+
+        Coordinate newCoordinate = new Coordinate(newX, coordinate.yAxis());
+        checkObstacle(newCoordinate);
+        return newCoordinate;
     }
 }

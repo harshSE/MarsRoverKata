@@ -2,8 +2,13 @@ package com.harshdev.kata.marsrover;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.stream.Stream;
+
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MarsRoverTest {
@@ -43,6 +48,19 @@ public class MarsRoverTest {
     @Nested
     public class ForwardAndBackWardDirectionTest {
 
+
+        @ParameterizedTest
+        @MethodSource(value = "com.harshdev.kata.marsrover.MarsRoverTest#dataForMoveUpToTheLastPossiblePointAndReportObstacleWhenObstacleOccurred")
+        public void moveUpToTheLastPossiblePointAndReportObstacleWhenObstacleOccurred(Coordinate obstacle,
+                                                                                      DirectionEnum directionEnum,
+                                                                                      String command,
+                                                                                      String expectedState) {
+            Planet planet = new SpheresPlanet(new Axis(1, 10), new Axis(1, 10), new Obstacles(singletonList(obstacle)));
+            MarsRover marsRover = new MarsRover(planet, new Coordinate(5, 5), directionEnum);
+            String state = marsRover.execute(command);
+            assertThat(state).isEqualTo(expectedState);
+        }
+
         @Nested
         public class FacingNorthDirection {
 
@@ -71,6 +89,8 @@ public class MarsRoverTest {
                 String state = marsRover.execute(command);
                 assertThat(state).isEqualTo(expectedState);
             }
+
+
         }
 
         @Nested
@@ -164,8 +184,44 @@ public class MarsRoverTest {
                 assertThat(state).isEqualTo(expectedState);
             }
         }
+        
+        
 
 
     }
+
+    private static Stream<Arguments> dataForMoveUpToTheLastPossiblePointAndReportObstacleWhenObstacleOccurred() {
+        return Stream.of(
+                Arguments.of(new Coordinate(5,6), DirectionEnum.NORTH,"FFFF", "O:5:5:N"),
+                Arguments.of(new Coordinate(5,7), DirectionEnum.NORTH,"FFFF", "O:5:6:N"),
+                Arguments.of(new Coordinate(5,8), DirectionEnum.NORTH,"FFFF", "O:5:7:N"),
+                Arguments.of(new Coordinate(5,4), DirectionEnum.NORTH,"BBBB", "O:5:5:N"),
+                Arguments.of(new Coordinate(5,3), DirectionEnum.NORTH,"BBBB", "O:5:4:N"),
+                Arguments.of(new Coordinate(5,2), DirectionEnum.NORTH,"BBBB", "O:5:3:N"),
+
+                Arguments.of(new Coordinate(5,6), DirectionEnum.SOUTH,"BBBB", "O:5:5:S"),
+                Arguments.of(new Coordinate(5,7), DirectionEnum.SOUTH,"BBBB", "O:5:6:S"),
+                Arguments.of(new Coordinate(5,8), DirectionEnum.SOUTH,"BBBB", "O:5:7:S"),
+                Arguments.of(new Coordinate(5,4), DirectionEnum.SOUTH,"FFFF", "O:5:5:S"),
+                Arguments.of(new Coordinate(5,3), DirectionEnum.SOUTH,"FFFF", "O:5:4:S"),
+                Arguments.of(new Coordinate(5,2), DirectionEnum.SOUTH,"FFFF", "O:5:3:S"),
+
+                Arguments.of(new Coordinate(6,5), DirectionEnum.EAST,"FFFF", "O:5:5:E"),
+                Arguments.of(new Coordinate(7,5), DirectionEnum.EAST,"FFFF", "O:6:5:E"),
+                Arguments.of(new Coordinate(8,5), DirectionEnum.EAST,"FFFF", "O:7:5:E"),
+                Arguments.of(new Coordinate(4,5), DirectionEnum.EAST,"BBBB", "O:5:5:E"),
+                Arguments.of(new Coordinate(3,5), DirectionEnum.EAST,"BBBB", "O:4:5:E"),
+                Arguments.of(new Coordinate(2,5), DirectionEnum.EAST,"BBBB", "O:3:5:E"),
+
+                Arguments.of(new Coordinate(6,5), DirectionEnum.WEST,"BBBB", "O:5:5:W"),
+                Arguments.of(new Coordinate(7,5), DirectionEnum.WEST,"BBBB", "O:6:5:W"),
+                Arguments.of(new Coordinate(8,5), DirectionEnum.WEST,"BBBB", "O:7:5:W"),
+                Arguments.of(new Coordinate(4,5), DirectionEnum.WEST,"FFFF", "O:5:5:W"),
+                Arguments.of(new Coordinate(3,5), DirectionEnum.WEST,"FFFF", "O:4:5:W"),
+                Arguments.of(new Coordinate(2,5), DirectionEnum.WEST,"FFFF", "O:3:5:W")
+        );
+    }
+    
+    
 
 }
