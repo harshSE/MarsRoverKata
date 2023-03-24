@@ -1,6 +1,5 @@
 package com.harshdev.kata.marsrover;
 
-import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 
 import java.util.Objects;
 
